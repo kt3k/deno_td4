@@ -19,9 +19,14 @@ class Io {
 class CPUState {
   reg: Register;
   flg: Flag;
-  pc = 0;
-  mem: number[] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // 16 0s
+  pc: number;
+  mem: number[];
   io: Io;
+
+  constructor(program: number[]) {
+    this.pc = 0;
+    this.mem = program;
+  }
 
   run() {
     while(this.pc >= ADDRESS_SPACE_SIZE) {
@@ -176,4 +181,8 @@ enum Ops {
   IN_B = 0x06, // 0110: IN B
   OUT_B = 0x09, // 1001: OUT B
   OUT_IM = 0x0b // 1011: OUT Im
+}
+
+export function run(program: number[]) {
+  return new CPUState(program)
 }
