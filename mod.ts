@@ -23,8 +23,9 @@ class Flag {
 class Io {
   in: number;
   out: number[];
-  constructor() {
-    this.in = 0;
+
+  constructor(input: number) {
+    this.in = input;
     this.out = [];
   }
 }
@@ -36,10 +37,10 @@ export class CPUState {
   mem: number[];
   io: Io;
 
-  constructor(program: number[]) {
+  constructor(program: number[], input: number) {
     this.pc = 0;
     this.mem = program;
-    this.io = new Io();
+    this.io = new Io(input);
     this.reg = new Register();
     this.flg = new Flag();
   }
@@ -150,9 +151,10 @@ export class CPUState {
   jnc(im: number): boolean {
     if (!this.flg.carry) {
       this.pc = im;
+      this.flg.carry = 0;
+      return false;
     }
-    this.flg.carry = 0;
-    return false;
+    return true;
   }
 
   // 0010: IN A
@@ -186,7 +188,7 @@ export class CPUState {
 
 enum Ops {
   ADD_A = 0x00, // 0000: ADD A, Im
-  ADD_B = 0x05, // 0101: AAD B, Im
+  ADD_B = 0x05, // 0101: ADD B, Im
   MOV_A = 0x03, // 0011: MOV A, Im
   MOV_B = 0x07, // 0111: MOV B, Im
   MOV_B2A = 0x01, // 0001: MOV A, B
@@ -199,8 +201,8 @@ enum Ops {
   OUT_IM = 0x0b // 1011: OUT Im
 }
 
-export function run(program: number[]) {
-  const cpu = new CPUState(program);
+export function run(program: number[], input: number) {
+  const cpu = new CPUState(program, input);
   cpu.run();
   return cpu.io.out;
 }
