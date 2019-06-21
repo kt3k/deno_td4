@@ -29,9 +29,9 @@ class CPUState {
   }
 
   run() {
-    while(this.pc >= ADDRESS_SPACE_SIZE) {
+    while (this.pc >= ADDRESS_SPACE_SIZE) {
       if (this.exec(this.fetch())) {
-        this.pc ++
+        this.pc++;
       }
     }
   }
@@ -102,54 +102,54 @@ class CPUState {
 
   // 0011: MOV A, Im
   movA(im: number): boolean {
-    this.reg.a = im
+    this.reg.a = im;
     return true;
   }
 
   // 0111: MOV B, Im
   movB(im: number): boolean {
-    this.reg.b = im
+    this.reg.b = im;
     return true;
   }
 
   // 0001: MOV A, B
   movB2A(): boolean {
-    this.reg.a = this.reg.b
+    this.reg.a = this.reg.b;
     return true;
   }
 
   // 0100: MOV B, A
   movA2B(): boolean {
-    this.reg.b = this.reg.a
+    this.reg.b = this.reg.a;
     return true;
   }
 
   // 1111: JMP Im
   jmp(im: number): boolean {
-    this.pc = im
+    this.pc = im;
     return false;
   }
 
   // 1110: JNC Im
   jnc(im: number): boolean {
     if (!this.flg.carry) {
-      this.pc = im
+      this.pc = im;
     }
-    this.flg.carry = 0
+    this.flg.carry = 0;
     return false;
   }
 
   // 0010: IN A
   inA(im: number): boolean {
     this.flg.carry = 0;
-    this.reg.a = this.io.in & 0x0f
+    this.reg.a = this.io.in & 0x0f;
     return true;
   }
 
   // 0110: IN B
   inB(im: number): boolean {
     this.flg.carry = 0;
-    this.reg.b = this.io.in & 0x0f
+    this.reg.b = this.io.in & 0x0f;
     return true;
   }
 
@@ -184,5 +184,5 @@ enum Ops {
 }
 
 export function run(program: number[]) {
-  return new CPUState(program)
+  return new CPUState(program);
 }
