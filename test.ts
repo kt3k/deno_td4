@@ -29,4 +29,13 @@ test(function test2() {
   assertEquals(cpu.io.out, [0x9]);
 });
 
+test(function test3() {
+  // JMP 2
+  // ADD_B 1
+  // OUT_B
+  const cpu = new CPUState([0xf2, 0x51, 0x90]);
+  cpu.run();
+  assertEquals(cpu.io.out, [0x0]);
+})
+
 runIfMain(import.meta);
