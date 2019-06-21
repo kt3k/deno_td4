@@ -5,18 +5,31 @@ const ADDRESS_SPACE_SIZE = 16;
 class Register {
   a: number;
   b: number;
+
+  constructor() {
+    this.a = 0;
+    this.b = 0;
+  }
 }
 
 class Flag {
   carry: number;
+
+  constructor() {
+    this.carry = 0;
+  }
 }
 
 class Io {
   in: number;
-  out: number;
+  out: number[];
+  constructor() {
+    this.in = 0;
+    this.out = [];
+  }
 }
 
-class CPUState {
+export class CPUState {
   reg: Register;
   flg: Flag;
   pc: number;
@@ -26,10 +39,13 @@ class CPUState {
   constructor(program: number[]) {
     this.pc = 0;
     this.mem = program;
+    this.io = new Io();
+    this.reg = new Register();
+    this.flg = new Flag();
   }
 
   run() {
-    while (this.pc >= ADDRESS_SPACE_SIZE) {
+    while (this.pc < ADDRESS_SPACE_SIZE) {
       if (this.exec(this.fetch())) {
         this.pc++;
       }
@@ -37,16 +53,16 @@ class CPUState {
   }
 
   fetch(): number {
-    return this.mem[this.pc];
+    return this.mem[this.pc] || 0;
   }
 
   exec(data: number): boolean {
-    assert(data >= 0x00 && data < 0x0f, "data should be between 0 and 16");
+    assert(data >= 0x00 && data <= 0xff, "data should be between 0 and 255");
 
     const op = data >> 4;
     const im = data & 0x0f;
 
-    console.log(`op=${op} im=${im}`);
+    console.log(`pc=${this.pc} op=${op} im=${im}`);
 
     switch (op) {
       case Ops.ADD_A:
@@ -75,7 +91,7 @@ class CPUState {
         return this.outIm(im);
       default:
         // Noop
-        return false;
+        return true;
     }
   }
 
@@ -156,14 +172,14 @@ class CPUState {
   // 1001: OUT B
   outB(): boolean {
     this.flg.carry = 0;
-    this.io.out = this.reg.b;
+    this.io.out.push(this.reg.b);
     return true;
   }
 
   // 1011: OUT Im
   outIm(im: number): boolean {
     this.flg.carry = 0;
-    this.io.out = im;
+    this.io.out.push(im);
     return true;
   }
 }
@@ -184,5 +200,7 @@ enum Ops {
 }
 
 export function run(program: number[]) {
-  return new CPUState(program);
+  const cpu = new CPUState(program);
+  cpu.run();
+  return cpu.io.out;
 }
