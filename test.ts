@@ -90,6 +90,13 @@ test(function tset8() {
 });
 
 test(function tset9() {
+  // IN_A
+  // ADD_A 8
+  // JNC 4
+  // ADD_A 5
+  // ADD_A 1
+  // MOV_A2B
+  // OUT_B
   const cpu = new CPUState([0x20, 0x08, 0xe4, 0x05, 0x01, 0x40, 0x90], 0x8);
   cpu.run();
   assertEquals(cpu.io.out, [0x6]);
