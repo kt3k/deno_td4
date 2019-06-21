@@ -62,7 +62,7 @@ export class CPUState {
     const op = data >> 4;
     const im = data & 0x0f;
 
-    console.log(`pc=${this.pc} op=${op} im=${im}`);
+    // console.log(`pc=${this.pc} op=${op} im=${im}`);
 
     switch (op) {
       case Ops.ADD_A:
